@@ -39,7 +39,7 @@ class Router<routerStateType : StateType>(var store: Store<routerStateType>,
             routingActions.forEach { routingAction ->
                 routingSerailActionHandler(routingAction, state)
             }
-            lastNavigationState = state.copy()
+            lastNavigationState = state.copy(state.route.copyRoutes())
         }
     }
 

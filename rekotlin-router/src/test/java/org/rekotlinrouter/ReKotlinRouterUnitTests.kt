@@ -274,4 +274,60 @@ internal class ReKotlinRouterUnitTests {
         assertThat(action2Correct).isTrue()
         assertThat(routingActions.count()).isEqualTo(2)
     }
+
+    @Test
+    //@DisplayName("calculates transitions from an empty route to a multi segment route on when same route list object is modified")
+    fun test_transition_from_empty_to_multi_segment_route_one_by_one() {
+
+        // Given
+        var lastRoute: Route = arrayListOf()
+        val newRoute = arrayListOf(mainActivityIdentifier)
+
+        // When
+        val routingActionsOld = Router.routingActionsForTransitionFrom(lastRoute, newRoute)
+        //how copy works
+        //lastRoute = newRoute
+
+        //deep copy
+        lastRoute = newRoute.copyRoutes()
+        newRoute.add(statsActivityIdentifier)
+
+        val routingActions = Router.routingActionsForTransitionFrom(lastRoute, newRoute)
+
+        // Then
+        var action1Correct = false
+        var action2Correct = false
+
+        routingActionsOld.forEach { routingAction ->
+            when (routingAction) {
+                is push -> {
+                    if (routingAction.responsibleRoutableIndex == 0 && routingAction.segmentToBePushed == mainActivityIdentifier) {
+                        action1Correct = true
+                    }
+                }
+            }
+        }
+
+        routingActions.forEach { routingAction ->
+            when (routingAction) {
+                is push -> {
+                    if (routingAction.responsibleRoutableIndex == 1 && routingAction.segmentToBePushed == statsActivityIdentifier) {
+                        action2Correct = true
+                    }
+                }
+            }
+        }
+        assertThat(action1Correct).isTrue()
+        assertThat(action2Correct).isTrue()
+        assertThat(routingActionsOld.count()).isEqualTo(1)
+        assertThat(routingActions.count()).isEqualTo(1)
+    }
+
+    @Test
+    fun test_copy_routes(){
+        val route = arrayListOf(mainActivityIdentifier,statsActivityIdentifier)
+        val copiedRoutes = route.copyRoutes()
+        assertThat(copiedRoutes.count()).isEqualTo(route.count())
+        assertThat(copiedRoutes[0]).isEqualTo(route[0])
+    }
 }

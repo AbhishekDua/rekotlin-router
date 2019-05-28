@@ -5,6 +5,14 @@ typealias RoutingCompletionHandler = () -> Unit
 typealias RouteElementIdentifier = String
 typealias Route = List<RouteElementIdentifier>
 
+fun Route.copyRoutes(): Route {
+    val copiedRoutes = arrayListOf<RouteElementIdentifier>()
+    this.forEach { route ->
+        copiedRoutes.add(route)
+    }
+    return copiedRoutes
+}
+
 
 interface Routable {
 
